@@ -1,0 +1,47 @@
+{
+    "family": "observe-test-task",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": ["FARGATE"],
+    "cpu": "256",
+    "memory": "512",
+    "executionRoleArn": "arn:aws:iam::590183861614:role/ecsTaskExecutionRole",
+    "containerDefinitions": [
+      {
+        "name": "app",
+        "image": "alpine",
+        "essential": true,
+        "command": ["sh", "-c", "while true; do echo hello; sleep 60; done"],
+        "logConfiguration": {
+          "logDriver": "awslogs",
+          "options": {
+            "awslogs-group": "/ecs/observe-test-task",
+            "awslogs-region": "us-east-2",
+            "awslogs-stream-prefix": "app"
+          }
+        }
+      },
+      {
+        "name": "observe-agent",
+        "image": "observeinc/agent:latest",
+        "essential": false,
+        "environment": [
+          {
+            "name": "OBSERVE_CUSTOMER",
+            "value": "https://100112502756.observeinc.com/"
+          },
+          {
+            "name": "OBSERVE_TOKEN",
+            "value": "ds1vC0hx02saG6eXHFH7:3VoJsQGxs2kdh2kvyCPxxY-LsGcYiqRn"
+          }
+        ],
+        "logConfiguration": {
+          "logDriver": "awslogs",
+          "options": {
+            "awslogs-group": "/ecs/observe-test-task",
+            "awslogs-region": "us-east-2",
+            "awslogs-stream-prefix": "observe"
+          }
+        }
+      }
+    ]
+  }
